@@ -1,0 +1,45 @@
+Topic 1 Get Ready
+
+Overview
+Install Python
+Install Sublime Text <Any editor is fine>
+First Python Script
+Comment
+Interactive Python IDLE
+Topic 2: Data Types
+
+Number
+String
+List
+Tuple
+Dictionary
+Set
+Topic 3 Operators
+
+Arithmetic Operators
+Compound Operators
+Comparison Operators
+Membership Operators
+Logical Operators
+Identity Operators
+Topic 4 Control Structure
+
+Conditional
+Loop
+Iterating Over Multiple Sequences
+Break & Continue
+Topic 5 Function
+
+Function syntax
+Return value
+Return multiple values
+Passing argument values
+Default argument values
+Variable argument sequence
+Topic 6 Modules & Packages
+
+Modules
+Packages
+Python Standard Library
+Install Third Party Packages
+Anaconda Packages
