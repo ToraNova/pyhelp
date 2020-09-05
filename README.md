@@ -9,4 +9,7 @@ python -m venv .
 pip install -r requirements.txt
 ```
 
+## SAMPLES
+Sample files are located [here](samples), which contain useful references for development purposes.
+
 
