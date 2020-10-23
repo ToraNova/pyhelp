@@ -51,7 +51,9 @@ def egcd_nr(a,b):
     s = 0
     t = 1
     if(a==0):
-        return b, to, so
+        return b, 0, 1
+    if(a==1):
+        return a, 1, 0
     while(1):
         a,b = __swapgt(a,b)
         q = b//a
@@ -65,6 +67,7 @@ def egcd_nr(a,b):
         a,b = __swapgt(a,b)
         if(b%a == 0):
             break
+    # gcd, coeff small int, coeff large int
     return a, t, s
 
 if __name__ == "__main__":
@@ -94,7 +97,8 @@ if __name__ == "__main__":
     egcd_tv = [
             (46, 240, 2, 47, -9),
             (1914, 899, 29, -17, 8),
-            (81, 57, 3, 10, -7)
+            (81, 57, 3, 10, -7),
+            (1, 17, 1, 1, 0)
     ]
 
     for v in egcd_tv:
