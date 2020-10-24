@@ -65,10 +65,19 @@ def egcd_nr(a,b):
         bo = b
         b = b%a
         a,b = __swapgt(a,b)
-        if(b%a == 0):
+        if(a==0 or b%a == 0):
             break
     # gcd, coeff small int, coeff large int
     return a, t, s
+
+'''
+mod inverse wrapper
+return z such that az = 1 mod b
+'''
+def modinv(a,b):
+    a = a % b
+    gcd, inv, _ = egcd_nr(a,b)
+    return inv
 
 if __name__ == "__main__":
     gcd_tv = [
@@ -98,7 +107,8 @@ if __name__ == "__main__":
             (46, 240, 2, 47, -9),
             (1914, 899, 29, -17, 8),
             (81, 57, 3, 10, -7),
-            (1, 17, 1, 1, 0)
+            (1, 17, 1, 1, 0),
+            (2, 17, 1, 9, 0)
     ]
 
     for v in egcd_tv:

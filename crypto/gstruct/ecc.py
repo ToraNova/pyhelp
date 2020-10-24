@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import math
 from random import randrange
 from algo import euclid
 
@@ -18,6 +19,11 @@ class Point:
             return True
         return self._x == point.getx() and self._y == point.gety()
 
+    def copy(self):
+        if(self.isinf()):
+            return Point('inf')
+        return Point(self._x, self._y)
+
     def getx(self):
         if(self.isinf()):
             return 'inf'
@@ -31,6 +37,9 @@ class Point:
     def __str__(self):
         return '(inf)' if self.isinf() else ('(%d,%d)' % (self._x, self._y))
 
+    def __hash__(self):
+        return hash((self._x,self._y,self._inf))
+
 '''
 standard elliptic curve under the form
 y^2 = x^3 + ax + b modulo p
@@ -42,25 +51,95 @@ class Standard:
         self._a = a
         self._b = b
         self._p = p
+        self._n = self.boundn()
 
     def getord(self):
-        return self._p
+        return self._n
+
+    # an upper bound on max # of elements based on Hasse's theorem
+    # finding exact number is difficult, hence ppl use standard curves (NIST)
+    def boundn(self,gmax=True):
+        return int(self._p + 1 + 2*math.sqrt(self._p)) if gmax \
+                else int(self._p + 1 - 2*math.sqrt(self._p))
+
+    # untrivially compute cardinality of curve with base point 'base'
+    # returns number of base points
+    def computen(self,base):
+        tp = base.copy()
+        for n in range(self.boundn()):
+            tp = self.add(tp, base)
+            if(tp.isinf()):
+                if(self.add(tp,base).equals(base)):
+                    break
+                else:
+                    raise ValueError("curve %d %d %d is non-cyclic with base %s" % (self._a, self._b, self._p, base))
+        self._n = n+2
+        return n+2 #plus base and point at inf
+
+    def getrandint(self, maxv = 2):
+        if(maxv <= 2):
+            maxv = self.getord() - 1
+        return randrange(2, maxv)
+
+    def mul(self,scalar,point):
+        if(scalar == 0):
+            return point.copy()
+        return self._famul(scalar,point)
+
+    # fast multiplication with doubling
+    def _famul(self, scalar, point):
+        tp = point.copy()
+        if(tp.isinf()):
+            return tp
+        dt = int(math.log(scalar,2))
+        for i in range(dt):
+            tp = self._double(tp)
+        for i in range(scalar-pow(2,dt)):
+            tp = self._add(tp,point)
+        return tp
+
+    # naive multiplicative addition
+    def _namul(self, scalar, point):
+        tp = point.copy()
+        for i in range(scalar-1):
+            tp = self.add(tp, point)
+        return tp
+
+    def double(self,point):
+        if(point.isinf()):
+            return point.copy()
+        return self._double(point)
+
+    # unlikely to get inf element from doubling since cardinality is usually prime
+    def _double(self,point):
+        div = (2*point.gety()) % self._p
+        num = ((3*pow(point.getx(),2)+self._a)) % self._p
+        gcd, inv, _ = euclid.egcd_nr( div, self._p)
+        s = ( num * inv ) % self._p
+        if(gcd == self._p):
+            return Point('inf')
+        xo = (pow(s,2) - 2*point.getx()) % self._p
+        yo = (s*(point.getx()-xo)-point.gety()) % self._p
+        return Point(xo,yo)
 
     # group addition modulo p
     def add(self,p1,p2):
+        if(p1.equals(p2)):
+            # point doubling
+            return self._double(p1)
+        else:
+            return self._add(p1,p2)
+
+    def _add(self,p1,p2):
+        # point adding
         if(p1.isinf()):
             return p2
         elif(p2.isinf()):
             return p1
-
-        if(p1.equals(p2)):
-            # point doubling
-            gcd, inv, _ = euclid.egcd_nr(2*p1.gety(), self._p)
-            s = ((3*pow(p1.getx(),2)+self._a) * inv ) % self._p
-        else:
-            # point adding
-            gcd, inv, _ = euclid.egcd_nr((p2.getx()-p1.getx()), self._p)
-            s = (abs(p2.gety()-p1.gety()) * inv) % self._p
+        div = (p2.getx()-p1.getx()) % self._p
+        num = (p2.gety()-p1.gety()) % self._p
+        gcd, inv, _ = euclid.egcd_nr( div, self._p)
+        s = ( num * inv ) % self._p
         if(gcd == self._p):
             # point at inf
             return Point('inf')
