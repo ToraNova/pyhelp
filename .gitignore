@@ -1,9 +1,0 @@
-# ignore pyvenv
-/bin/*
-/include/*
-/lib/*
-/lib64/*
-
-# ignore pycache
-__pycache__/*
-*.pyc
