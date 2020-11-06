@@ -8,13 +8,13 @@ long len(const char *str){
 	return c;
 }
 
-void foo(){
+void somefoo(){
 	int i;
 	char s[] = "hello world\n";
 	for(i=0;i<len(s);i++) putchar( s[i] );
 }
 
-int bar(int d){
+int somebar(int d){
 	putchar( (char)*(((unsigned char *)&d)+0) );
 	putchar( (char)*(((unsigned char *)&d)+1) );
 	putchar( (char)*(((unsigned char *)&d)+2) );
@@ -23,7 +23,7 @@ int bar(int d){
 }
 
 const struct _library library = {
-    .foo = foo,
-    .bar = bar,
+    .foo = somefoo,
+    .bar = somebar,
     .tmp = 0x33323130
 };
