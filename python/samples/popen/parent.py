@@ -4,6 +4,7 @@ an example parent process to run child.py
 using popen
 a delay is noticeable because the child.py purposefully
 delay its own execution
+childproc.poll() checks if 'childproc' has ended, and returns return code if true, else returns None
 '''
 import sys, time, subprocess
 
